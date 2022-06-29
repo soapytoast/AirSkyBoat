@@ -1101,11 +1101,11 @@ function cMeleeRatio(attacker, defender, params, ignoredDef, tp)
     -- Bernoulli distribution, applied for cRatio < 0.5 and 0.75 < cRatio < 1.25
     -- Other cRatio values are uniformly distributed
     -- https://www.bluegartr.com/threads/108161-pDif-and-damage?p=5308205&viewfull=1#post5308205
-    local U = math.max(0.0, math.min(0.333, 1.3 * (2.0 - math.abs(cratio - 1)) - 1.96))
+    local u = math.max(0.0, math.min(0.333, 1.3 * (2.0 - math.abs(cratio - 1)) - 1.96))
 
     local bernoulli = false
 
-    if (math.random() < U) then
+    if (math.random() < u) then
         bernoulli = true
     end
 
