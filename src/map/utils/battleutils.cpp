@@ -1709,8 +1709,8 @@ namespace battleutils
         }
 
         // calculate min/max PDIF
-        float upperLimit = 3.0f;
-        float lowerLimit = 0.0f;
+        float maxPdif = 3.0f;
+        float minPdif = 0.0f;
 
         if (cRatio < 0.9f)
         {
@@ -1731,7 +1731,7 @@ namespace battleutils
         // return random number between the two
         float pdif = xirand::GetRandomNumber(minPdif, maxPdif);
 
-        pdif = std::clamp<float>(pdif, 0, 3)
+        pdif = std::clamp<float>(pdif, 0, 3);
 
         if (isCritical)
         {
@@ -2975,7 +2975,6 @@ namespace battleutils
             wRatio += 1;
         }
 
-        float qRatio     = wRatio;
         float upperLimit = 3.25f;
         float lowerLimit = 0.0f;
 
@@ -2983,12 +2982,12 @@ namespace battleutils
         // Pre-Randomized values excluding Damage Limit+ trait
         // Damage Limit+ trait adds 0.1/rank to these values
         // type : non-crit : crit
-        // 1H : 1.0 : 2.0
-        // H2H & GK : 1.25 : 2.25
-        // 2H : 1.25 : 2.25
-        // Scythe : 1.25 : 2.25
-        // Archery & Throwing : 2.0 : 3.0
-        // Marksmanship : 2.0 : 3.0
+        // 1H : 0 : 2
+        // H2H & GK : 0 : 2.25
+        // 2H : 0 : 2.25
+        // Scythe : 0 : 2.25
+        // Archery & Throwing : 0 : 3
+        // Marksmanship : 0 : 3
 
         // https://www.bluegartr.com/threads/114636-Monster-Avatar-Pet-damage
         // Monster pDIF = Avatar pDIF = Pet pDIF
@@ -3048,7 +3047,7 @@ namespace battleutils
         }
         else if (wRatio < 1.5f)
         {
-            upperLimit = wRatio * 1.25f + writeDeclaration;
+            upperLimit = wRatio * 1.25f;
         }
         else if (wRatio < 2.625f)
         {
@@ -3080,7 +3079,7 @@ namespace battleutils
             lowerLimit = wRatio - 0.375f;
         }
 
-        float pDIF = 0.0f
+        float pDIF = 0.0f;
 
         // Bernoulli distribution, applied for cRatio < 0.5 and 0.75 < cRatio < 1.25
         // Other cRatio values are uniformly distributed
@@ -3097,7 +3096,7 @@ namespace battleutils
             pDIF = xirand::GetRandomNumber(lowerLimit, upperLimit);
         }
 
-        pDIF = std::clamp<float>(pDIF, 0, 3.0)
+        pDIF = std::clamp<float>(pDIF, 0, 3.0);
         pDIF = pDIF * xirand::GetRandomNumber(1.0f, 1.05f);
 
         if (isCritical)
