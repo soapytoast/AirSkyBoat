@@ -221,19 +221,14 @@ local function cRangedRatio(attacker, defender, params, ignoredDef, tp)
 
     local levelCorrection = 0
     if attacker:getMainLvl() < defender:getMainLvl() then
-        levelCorrection = 0.025 * (defender:getMainLvl() - attacker:getMainLvl())
+        if attacker:hasStatusEffect(xi.effect.FLASHY_SHOT) then
+            levelCorrection = 0
+        else
+            levelCorrection = (defender:getMainLvl() - attacker:getMainLvl()) * 0.025
+        end
     end
 
-    cratio = cratio - levelCorrection
-    cratio = cratio * atkmulti
-
-    if cratio > 3 - levelCorrection then
-        cratio = 3 - levelCorrection
-    end
-
-    if cratio < 0 then
-        cratio = 0
-    end
+    cratio = utils.clamp(cratio, 0, 3)
 
     -- max
     local pdifmax = 0
@@ -1099,6 +1094,23 @@ function cMeleeRatio(attacker, defender, params, ignoredDef, tp)
         pdifmin = cratio * 1176 / 1024 - 775 / 1024
     else
         pdifmin = cratio - 0.375
+    end
+
+    -- Bernoulli distribution, applied for cRatio < 0.5 and 0.75 < cRatio < 1.25
+    -- Other cRatio values are uniformly distributed
+    -- https://www.bluegartr.com/threads/108161-pDif-and-damage?p=5308205&viewfull=1#post5308205
+    local u = math.max(0.0, math.min(0.333, 1.3 * (2.0 - math.abs(cratio - 1)) - 1.96))
+
+    local bernoulli = false
+
+    if (math.random() < u) then
+        bernoulli = true
+    end
+
+    if (bernoulli) then
+        local roundedRatio = math.floor(cratio + 0.5) -- equivalent to rounding
+        pdifmin = roundedRatio
+        pdifmax = roundedRatio
     end
 
     local critbonus = attacker:getMod(xi.mod.CRIT_DMG_INCREASE) - defender:getMod(xi.mod.CRIT_DEF_BONUS)
