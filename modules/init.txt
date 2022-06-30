@@ -20,7 +20,7 @@
 # | 
 # | renamer
 # | 
-# ---------------------
+# ----------------------
 #
 # Will load everything under the renamer folder.
 #
